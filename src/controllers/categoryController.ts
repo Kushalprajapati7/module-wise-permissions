@@ -18,8 +18,14 @@ class CategoryController{
         try {
             const id = req.params.id;
             const {name, description} = req.body;
-            const category = await categoryServices.updateCategory(id,name,description);
-            res.json({category, message:"Category Updated Successfully"})    
+            const category = await categoryServices.showCategoryById(id);
+            if(!category){
+                
+                res.status(404).json({ error: `Category with ID ${id} not found` });
+                return
+            }
+            const Updatedcategory = await categoryServices.updateCategory(id,name,description);
+            res.json({Updatedcategory, message:"Category Updated Successfully"})    
         } catch (error:any) {
             res.status(500).json({
                 message: error.message
@@ -30,7 +36,12 @@ class CategoryController{
     public async delete(req:Request, res:Response):Promise<void>{
         try {
             const id = req.params.id;
-            const category = await categoryServices.deleteCategory(id);
+            const category = await categoryServices.showCategoryById(id);
+            if(!category){
+                res.status(404).json({ error: `Category with ID ${id} not found` });
+                return
+            }
+             await categoryServices.deleteCategory(id);
             res.json({category, message:"Category deleted Successfully"})    
         } catch (error:any) {
             res.status(500).json({
@@ -41,8 +52,12 @@ class CategoryController{
 
     public async allCategory(req:Request, res:Response):Promise<void>{
         try {
-            const category = await categoryServices.showCategories();
-            res.json({category, message:"List Of Category"})    
+            const categories = await categoryServices.showCategories();
+            if(!categories){
+                res.status(404).json({ error: `categories not found` });
+                return
+            }
+            res.json({categories, message:"List Of Category"})    
         } catch (error:any) {
             res.status(500).json({
                 message: error.message
@@ -54,6 +69,10 @@ class CategoryController{
         try {
             const id = req.params.id;
             const category = await categoryServices.showCategoryById(id);
+            if(!category){
+                res.status(404).json({ error: `Category with ID ${id} not found` });
+                return
+            }
             res.json({category, message:`Category of id ${id}`})    
         } catch (error:any) {
             res.status(500).json({

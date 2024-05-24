@@ -5,20 +5,15 @@ import categoryServices from "../services/categoryServices";
 import CustomRequest from "../types/customRequest";
 
 class BookController {
-    
+
 
     public async createBook(req: Request, res: Response): Promise<void> {
         try {
             const { title, author, category, ISBN, description, price } = req.body;
-            const bookAuthor = await AuthorServices.findAuthorById(author)
-
-            
-            const bookCategory = await categoryServices.showCategoryById(category)
-
-            if (!bookCategory) {
-                throw new Error(`category of Id ${category} Not Found !`)
+            if (!title || !author || !category || !ISBN || !description || !price) {
+                res.status(400).json({ error: "Data Can't Be Empty" });
+                return
             }
-
             const newBook = await BookServices.createBook(title, author, category, ISBN, description, price)
             res.json({ newBook, message: "Book Added Successfully" })
 
@@ -38,21 +33,28 @@ class BookController {
 
             const id = req.params.id;
             const bookById = await BookServices.showBookById(id);
-          
-            if (role == 'admin') {
+
+            if (!bookById) {
+                res.status(404).json({ error: `Book with id ${id} Not Found` });
+                return
+            }
+
+            if (role === 'admin') {
                 const updatedBook = await BookServices.updateBook(id, title, author, category, ISBN, description, price);
                 res.json({ updatedBook, message: "Book Updated Successfully" })
                 return
             }
 
             if (userId !== bookById.author) {
-                throw new Error(` Don't Have parmisson to Updated this Book`)
+                res.status(403).json({ error: " Don't Have parmisson to Updated this Book!" });
+                return
 
             }
             const bookCategory = await categoryServices.showCategoryById(category)
 
             if (!bookCategory) {
-                throw new Error(`category of Id ${category} Not Found !`)
+                res.status(404).json({ error: `category of Id ${category} Not Found !` });
+                return
             }
 
             const updatedBook = await BookServices.updateBook(id, title, author, category, ISBN, description, price);
@@ -69,19 +71,22 @@ class BookController {
         try {
             const id = req.params.id;
             const role = (req as CustomRequest).role;
-            const userId:any = (req as CustomRequest).userId;
+
+            const userId: any = (req as CustomRequest).userId;
             const book = await BookServices.showBookById(id);
             if (!book) {
-                throw new Error(`Book With Id ${id} Not Found`)
+                res.status(404).json({ error: `Book With Id ${id} Not Found`});
+                return
             }
 
             const bookById = await BookServices.showBookById(id);
             if (userId !== bookById.author) {
-                throw new Error(`Don't Have parmisson to Delete this Book`)
+                res.status(403).json({ error: " Don't Have parmisson to Updated this Book!" });
+                return
 
-            }   
+            }
 
-            if(role==='admin'){
+            if (role === 'admin') {
                 await BookServices.deleteBook(id);
                 res.json({ message: "Book Deleted Successfully" })
                 return
@@ -101,7 +106,8 @@ class BookController {
         try {
             const allBooks = await BookServices.showAllBook();
             if (!allBooks) {
-                throw new Error(`Books Not Found`)
+                res.status(404).json({ error: "Books Not Found!" });
+                return
             }
             res.json({ allBooks, message: "List Of All Books" })
 
@@ -117,7 +123,8 @@ class BookController {
             const id = req.params.id;
             const book = await BookServices.showBookById(id);
             if (!book) {
-                throw new Error(`Book With Id ${id} not found`);
+                res.status(404).json({ error: `Book With Id ${id} Not Found`});
+                return
             }
             res.json({ book, message: `Book with id ${id}` })
         } catch (error: any) {
@@ -133,7 +140,8 @@ class BookController {
             const books = await BookServices.bookByAutherId(id);
 
             if (books.length === 0) {
-                throw new Error(`Books Not found for ${id} author`)
+                res.status(404).json({ error: `Book for author Id ${id} Not Found`});
+                return
             }
             res.json({ books, message: `Books With Author Id ${id}` })
         } catch (error: any) {

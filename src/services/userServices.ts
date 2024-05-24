@@ -17,7 +17,7 @@ class UserServices{
     }
 
     public async loginUser(username:string, password:string):Promise<string>{
-        const user = await User.findOne({username}).select('+password');
+        const user = await User.findOne({username}).select('+password').select('role');
         
         if(!user){
             throw new Error(`User with Username ${username} not found`); 

@@ -21,7 +21,8 @@ class AuthorController {
             const id = req.params.id;
             const author = await authorServices.findAuthorById(id)
             if (!author) {
-                throw new Error(`Author with Id ${id} not found`);
+                res.status(404).json({ error: `Author with Id ${id} not found` });
+                return
             }
             const { name, biography, nationality } = req.body;
             const updatedAuthor = await authorServices.updateAuthor(id, name, biography, nationality);
@@ -38,10 +39,11 @@ class AuthorController {
         try {
             const id = req.params.id;
             const author = await authorServices.findAuthorById(id)
-            if(!author){
-                throw new Error(`Author with Id ${id} not found`);
+            if (!author) {
+                res.status(404).json({ error: `Author with Id ${id} not found` });
+                return
             }
-            const deleteAuthor = await authorServices.deleteAuthor(id);
+            await authorServices.deleteAuthor(id);
             res.json({message:"Author deleted Successfully"})    
 
         }
@@ -56,6 +58,10 @@ class AuthorController {
         try {
            
             const allAuthor = await authorServices.getAllAuthor();
+            if (!allAuthor) {
+                res.status(404).json({ error: `Authors not found` });
+                return
+            }
             res.json({allAuthor, message:"List Of all Author"})    
         }   
         catch (error: any) {
@@ -69,6 +75,10 @@ class AuthorController {
         try {
             const id = req.params.id;
             const author = await authorServices.findAuthorById(id);
+            if(!author){
+                res.status(404).json({ error: `Author with Id ${id} not found` });
+
+            }
             res.json({author, message:`Author of id ${id}`})   
         } catch (error:any) {
             res.status(500).json({
