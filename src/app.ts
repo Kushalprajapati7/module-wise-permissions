@@ -20,12 +20,12 @@ app.use('/api/category',categoryRoutes);
 app.use('/api/author',authorRoutes);
 app.use('/api/book', bookRoutes)
 
+connectDB().then(() => {
 
-connectDB();
+    app.listen(port, () => {
+        console.log(`server is On`);
 
-
-app.listen(port, () => {
-    console.log(`server is running at port ${port}`);
+    })
+}).catch((error: any) => {
+    console.log("Error starting server :", error.message);
 });
-
-
