@@ -57,7 +57,7 @@ class CategoryController{
                 res.status(404).json({ error: `categories not found` });
                 return
             }
-            res.json({categories, message:"List Of Category"})    
+            res.json(categories)    
         } catch (error:any) {
             res.status(500).json({
                 message: error.message
@@ -73,7 +73,7 @@ class CategoryController{
                 res.status(404).json({ error: `Category with ID ${id} not found` });
                 return
             }
-            res.json({category, message:`Category of id ${id}`})    
+            res.json(category)    
         } catch (error:any) {
             res.status(500).json({
                 message: error.message

@@ -4,8 +4,8 @@ import { Request, Response } from "express";
 class AuthorController {
     public async addauthor(req: Request, res: Response): Promise<void> {
         try {
-            const { name, biography, nationality } = req.body;
-            const newAuthor = await authorServices.createAuthor(name, biography, nationality);
+            const { name, email, password,biography, nationality,role } = req.body;
+            const newAuthor = await authorServices.createAuthor(name, email,password,biography, nationality,role);
             res.json({ newAuthor, message: "Author Added Successfully" })
 
         }
@@ -62,7 +62,7 @@ class AuthorController {
                 res.status(404).json({ error: `Authors not found` });
                 return
             }
-            res.json({allAuthor, message:"List Of all Author"})    
+            res.json(allAuthor)    
         }   
         catch (error: any) {
             res.status(500).json({
@@ -79,7 +79,7 @@ class AuthorController {
                 res.status(404).json({ error: `Author with Id ${id} not found` });
 
             }
-            res.json({author, message:`Author of id ${id}`})   
+            res.json(author)   
         } catch (error:any) {
             res.status(500).json({
                 message: error.message

@@ -1,10 +1,12 @@
 import authorModel from "../models/authorModel";
 import {AuthorDocument} from '../interfaces/authorInterface'
-
+import bcrypt from 'bcrypt'
 
 class AuthorServices{
-    public async createAuthor(name: string, biography: string, nationality: string): Promise<AuthorDocument> {
-        const newAuthor = new authorModel({ name, biography, nationality })
+    public async createAuthor(name: string, email:string, password:string, biography: string, nationality: string,role:string): Promise<AuthorDocument> {
+        const hashPassword = await bcrypt.hash(password,10);
+        
+        const newAuthor = new authorModel({ name, email,password:hashPassword, biography, nationality,role })
         return newAuthor.save();
     }
 
@@ -14,8 +16,21 @@ class AuthorServices{
     }
 
     public async getAllAuthor(): Promise<AuthorDocument[]> {
-        const allauthor = await authorModel.find()
-        return allauthor;
+        let allAuthor = await authorModel.find()
+        // allAuthor = await authorModel.aggregate(
+        //     [
+        //         {
+        //           $project: {
+        //             _id: 1,
+        //             name: 1,
+        //             email:1,
+        //             biography: 1,
+        //             nationality: 1
+        //           }
+        //         }
+        //       ]
+        // )
+        return allAuthor;
     }
 
     public async deleteAuthor(id: string): Promise<void> {

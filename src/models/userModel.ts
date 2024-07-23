@@ -24,7 +24,6 @@ const userSchema = new mongoose.Schema(
         password:{
             type:String,
             required:[true, 'Password is required'],
-            select:false
         },
         role:{
             type:String,
@@ -32,11 +31,9 @@ const userSchema = new mongoose.Schema(
                 values: ['admin', 'author','user']
             },
             default:'user',
-            select:false
         },
         profiles:{
             type: [Types.ObjectId],
-            select:false
         }
     },
     {

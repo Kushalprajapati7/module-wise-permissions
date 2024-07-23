@@ -33,7 +33,6 @@ async function verifyToken(req: Request, res: Response, next: NextFunction): Pro
             req.profiles = user.profiles
             req.roleId = user.role
         }
-
         next();
     } catch (error) {
         res.status(500).json({ error: "Token Has been Expired !" });

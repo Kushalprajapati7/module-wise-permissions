@@ -80,11 +80,11 @@ class BookController {
             }
 
             const bookById = await BookServices.showBookById(id);
-            if (userId !== bookById.author) {
-                res.status(403).json({ error: " Don't Have parmisson to Updated this Book!" });
-                return
+            // if (userId !== bookById.author) {
+            //     res.status(403).json({ error: " Don't Have parmisson to Updated this Book!" });
+            //     return
 
-            }
+            // }
 
             if (role === 'admin') {
                 await BookServices.deleteBook(id);
@@ -105,11 +105,13 @@ class BookController {
     public async showAllBook(req: Request, res: Response): Promise<void> {
         try {
             const allBooks = await BookServices.showAllBook();
+
             if (!allBooks) {
                 res.status(404).json({ error: "Books Not Found!" });
                 return
             }
-            res.json({ allBooks, message: "List Of All Books" })
+
+            res.json(allBooks)
 
         } catch (error: any) {
             res.status(500).json({
@@ -126,7 +128,7 @@ class BookController {
                 res.status(404).json({ error: `Book With Id ${id} Not Found`});
                 return
             }
-            res.json({ book, message: `Book with id ${id}` })
+            res.json(book)
         } catch (error: any) {
             res.status(500).json({
                 message: error.message
